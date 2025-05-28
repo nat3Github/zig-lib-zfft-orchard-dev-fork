@@ -1,6 +1,6 @@
 .{
-    .fingerprint = 0xbbd2563ebf17d797,
-    .name = .audioread,
+    .fingerprint = 0xf5aea99018d70b62,
+    .name = .zfft_orchard,
     .version = "0.0.0",
     .dependencies = .{},
     .paths = .{

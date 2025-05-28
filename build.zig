@@ -147,7 +147,7 @@ pub fn build(b: *std.Build) !void {
         .root_source_file = b.path("src/LUT.zig"),
     });
 
-    const fft_mod = b.createModule(.{
+    const fft_mod = b.addModule("zfft_orchard", .{
         .root_source_file = b.path("src/FFT.zig"),
         .imports = &.{
             .{ .name = "type_helpers", .module = type_helpers_mod },
