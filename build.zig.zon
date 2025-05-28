@@ -1,0 +1,14 @@
+.{
+    .fingerprint = 0xbbd2563ebf17d797,
+    .name = .audioread,
+    .version = "0.0.0",
+    .dependencies = .{},
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+        "test",
+        "LICENSE",
+        "Config.zig",
+    },
+}
