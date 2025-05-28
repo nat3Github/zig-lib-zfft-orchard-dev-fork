@@ -19,12 +19,12 @@ pub fn fft(comptime C: type, N: usize, w: [*]C, out: [*]C, in: [*]C) void {
 }
 
 pub fn cp_dit_dr(comptime C: type, w: [*]C, log2_N: usize, in: [*]C, out: [*]C, l: usize, i: usize) void {
-    var is: usize = math.shl(usize, 1, log2_N -% l);
-    var os: usize = math.shl(usize, 1, l -% 2);
+    const is: usize = math.shl(usize, 1, log2_N -% l);
+    const os: usize = math.shl(usize, 1, l -% 2);
 
-    var mask: usize = math.shl(usize, 1, log2_N) - 1;
-    var i_0: usize = i & mask;
-    var t: usize = log2_N - l;
+    const mask: usize = math.shl(usize, 1, log2_N) - 1;
+    const i_0: usize = i & mask;
+    const t: usize = log2_N - l;
 
     switch (l) {
         0 => {
@@ -33,18 +33,18 @@ pub fn cp_dit_dr(comptime C: type, w: [*]C, log2_N: usize, in: [*]C, out: [*]C, 
 
         // size 2 base case
         1 => {
-            var i_1: usize = i_0 ^ is;
-            var a: C = in[i_0];
-            var b: C = in[i_1];
+            const i_1: usize = i_0 ^ is;
+            const a: C = in[i_0];
+            const b: C = in[i_1];
             out[0] = add(a, b);
             out[1] = sub(a, b);
         },
 
         // size 4 base case
         2 => {
-            var i_1: usize = i_0 ^ math.shl(usize, 1, (log2_N - 1));
-            var a: C = in[i_0];
-            var b: C = in[i_1];
+            const i_1: usize = i_0 ^ math.shl(usize, 1, (log2_N - 1));
+            const a: C = in[i_0];
+            const b: C = in[i_1];
             out[0] = add(a, b);
             out[1] = sub(a, b);
 

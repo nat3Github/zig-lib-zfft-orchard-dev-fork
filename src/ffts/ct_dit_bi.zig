@@ -33,11 +33,11 @@ pub fn ct_fft_bi(comptime C: type, w: [*]C, in: [*]C, out: [*]C, log2_N: usize) 
     // stages 1 to log2_N-1
     j = 1;
     while (j < log2_N) : (j += 1) {
-        var s: usize = log2_N - j - 1;
-        var l: usize = math.shl(usize, 1, j);
+        const s: usize = log2_N - j - 1;
+        const l: usize = math.shl(usize, 1, j);
         i = 0;
         while (i < (math.shl(usize, 1, s))) : (i += 1) {
-            var t: [*]C = out + math.shl(usize, i, j + 1);
+            const t: [*]C = out + math.shl(usize, i, j + 1);
 
             var k: usize = 0;
             while (k < l) : (k += 1) {

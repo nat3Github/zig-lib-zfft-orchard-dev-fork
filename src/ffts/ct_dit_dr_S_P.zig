@@ -26,7 +26,7 @@ pub fn fft(comptime C: type, N: usize, w: [*]C, out: [*]C, in: [*]C) void {
 
 pub fn ct_fft_dr(comptime C: type, w: [*]C, in: [*]C, out: [*]C, s: usize, log2_N: usize) void {
     const l: usize = math.shl(usize, 1, log2_N - s - 1);
-    var stride: usize = math.shl(usize, 1, s);
+    const stride: usize = math.shl(usize, 1, s);
 
     switch (l) {
         1 => {
@@ -51,7 +51,7 @@ pub fn ct_fft_dr(comptime C: type, w: [*]C, in: [*]C, out: [*]C, s: usize, log2_
 
             var k: usize = 1;
             while (k < l / 4) : (k += 1) {
-                var t = get_twiddle(C, math.shl(usize, k, s), log2_N, w);
+                const t = get_twiddle(C, math.shl(usize, k, s), log2_N, w);
 
                 ct_dit_bf2(C, l, out + k, t);
                 ct_dit_bf2(C, l, out + k + l / 2, negI(t));

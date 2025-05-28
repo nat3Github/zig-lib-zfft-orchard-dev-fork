@@ -22,11 +22,11 @@ pub fn test_twiddle_sr_init() !void {
     inline for (.{ f32, f64 }) |T| {
         const C: type = Complex(T);
 
-        var N: usize = 32;
-        var l: usize = 8;
+        const N: usize = 32;
+        const l: usize = 8;
 
-        var w = try allocator.alloc(C, 8);
-        var w3 = try allocator.alloc(C, 8);
+        const w = try allocator.alloc(C, 8);
+        const w3 = try allocator.alloc(C, 8);
         Twiddles.Std.sr_init(C, l, N, w.ptr, w3.ptr);
 
         // correct values

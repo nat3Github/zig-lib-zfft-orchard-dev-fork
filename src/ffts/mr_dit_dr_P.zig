@@ -19,7 +19,7 @@ pub fn fft(comptime C: type, N: usize, w: [*]C, out: [*]C, in: [*]C) void {
 
 pub fn mr_dit_dr_P(comptime C: type, w: [*]C, in: [*]C, out: [*]C, s: usize, log2_N: usize) void {
     var l: usize = math.shl(usize, 1, log2_N - s);
-    var stride: usize = math.shl(usize, 1, s);
+    const stride: usize = math.shl(usize, 1, s);
 
     switch (l) {
 

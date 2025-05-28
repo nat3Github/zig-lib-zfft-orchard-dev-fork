@@ -75,9 +75,9 @@ pub fn sr_dit_bi_G_P(
 
     var k: usize = 3;
     while (k <= log2_N) : (k += 1) {
-        var n2: usize = math.shl(usize, 1, k);
-        var n4: usize = math.shr(usize, n2, 2);
-        var n8: usize = math.shr(usize, n2, 3);
+        const n2: usize = math.shl(usize, 1, k);
+        const n4: usize = math.shr(usize, n2, 2);
+        const n8: usize = math.shr(usize, n2, 3);
 
         is = 0;
         id = math.shl(usize, 2, k);

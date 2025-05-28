@@ -13,7 +13,7 @@ pub inline fn bit_reverse(i: anytype, log2_N: usize) @TypeOf(i) {
 pub inline fn bit_reverse_swap_bits(i: anytype, log2_N: usize) @TypeOf(i) {
     const T = @TypeOf(i);
 
-    var r: T = math.shr(T, @bitReverse(i), @bitSizeOf(T) - log2_N);
+    const r: T = math.shr(T, @bitReverse(i), @bitSizeOf(T) - log2_N);
 
     const evens: T = switch (T) {
         u16 => 0x5555,
@@ -29,7 +29,7 @@ pub inline fn bit_reverse_swap_bits(i: anytype, log2_N: usize) @TypeOf(i) {
         else => @compileError("unexpected type"),
     };
 
-    var j: T = math.shl(T, (r & evens), 1) | math.shr(T, (r & odds), 1);
+    const j: T = math.shl(T, (r & evens), 1) | math.shr(T, (r & odds), 1);
 
     return j;
 }

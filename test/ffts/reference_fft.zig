@@ -28,14 +28,14 @@ fn verify_actual_length8() !void {
     const eps = 1e-5;
 
     const m: usize = 3;
-    var nfft: usize = std.math.pow(usize, 2, m);
+    const nfft: usize = std.math.pow(usize, 2, m);
 
     inline for (.{ f32, f64 }) |T| {
         const C: type = Complex(T);
 
         // input x, output y arrays
         var x = try allocator.alloc(C, nfft);
-        var y = try allocator.alloc(C, nfft);
+        const y = try allocator.alloc(C, nfft);
         var x_ref = try allocator.alloc(C, nfft);
         var y_ref = try allocator.alloc(C, nfft);
 
@@ -102,11 +102,11 @@ fn verify() !void {
             const C: type = Complex(T);
 
             // input x, output y arrays
-            var nfft: usize = std.math.pow(usize, 2, m);
-            var x = try allocator.alloc(C, nfft);
-            var y = try allocator.alloc(C, nfft);
-            var x_ref = try allocator.alloc(C, nfft);
-            var y_ref = try allocator.alloc(C, nfft);
+            const nfft: usize = std.math.pow(usize, 2, m);
+            const x = try allocator.alloc(C, nfft);
+            const y = try allocator.alloc(C, nfft);
+            const x_ref = try allocator.alloc(C, nfft);
+            const y_ref = try allocator.alloc(C, nfft);
             Bench.gen_data(x_ref, x);
 
             // fft under test ------------------------------------------------------------

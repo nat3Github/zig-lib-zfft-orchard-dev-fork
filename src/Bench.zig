@@ -48,7 +48,7 @@ pub fn Bench() type {
             const T = @TypeOf(x);
             const V = ValueType(T);
 
-            var rnd = std.rand.DefaultPrng.init(42);
+            var rnd = std.Random.DefaultPrng.init(42);
             for (x_ref, 0..) |_, i| {
                 x_ref[i].re = rnd.random().float(V) - 0.5;
                 x_ref[i].im = rnd.random().float(V) - 0.5;
@@ -114,10 +114,10 @@ pub fn Bench() type {
                         // not an in-place fft (compare against yp)
                         var i: usize = 0;
                         while (i < nfft) : (i += 1) {
-                            if (std.math.fabs((y_ref[i].re - args.yp[i].re)) > eps) {
+                            if (@abs((y_ref[i].re - args.yp[i].re)) > eps) {
                                 return false;
                             }
-                            if (std.math.fabs((y_ref[i].im - args.yp[i].im)) > eps) {
+                            if (@abs((y_ref[i].im - args.yp[i].im)) > eps) {
                                 return false;
                             }
                         }
@@ -140,7 +140,7 @@ pub fn Bench() type {
             print("\t{any}, m: {d:>2}", .{ ValueType(C), self.m[i_m] });
             for (time, 0..) |_, i_rep| {
                 var i_loop: usize = 0;
-                var start = timer.read();
+                const start = timer.read();
                 while (i_loop < self.n_loop) : (i_loop += 1) {
                     if (in_place) {
                         // copy from safety x_ref to x used in fft
@@ -192,7 +192,7 @@ pub fn Bench() type {
             std.sort.insertion(f64, t, {}, cmpByValue);
 
             if (@mod(t.len, 2) == 0) {
-                var n: usize = t.len / 2;
+                const n: usize = t.len / 2;
                 return 0.5 * (t[n] + t[n - 1]);
             } else {
                 return t[(t.len - 1) / 2];
@@ -209,23 +209,23 @@ pub fn Bench() type {
         pub fn StructToTuple(comptime Struct: type) type {
             var typeInfo = @typeInfo(Struct);
 
-            const oldFields = typeInfo.Struct.fields;
+            const oldFields = typeInfo.@"struct".fields;
 
             var newFields: [oldFields.len]std.builtin.Type.StructField = undefined;
-            typeInfo.Struct.is_tuple = true;
+            typeInfo.@"struct".is_tuple = true;
 
-            inline for (typeInfo.Struct.fields, 0..) |field, i| {
+            inline for (typeInfo.@"struct".fields, 0..) |field, i| {
                 newFields[i] = field;
                 newFields[i].name = std.fmt.comptimePrint("{d}", .{i});
             }
-            typeInfo.Struct.fields = &newFields;
+            typeInfo.@"struct".fields = &newFields;
             return @Type(typeInfo);
         }
 
         pub fn structToTuple(my_struct: anytype) StructToTuple(@TypeOf(my_struct)) {
             var tuple: StructToTuple(@TypeOf(my_struct)) = undefined;
 
-            inline for (@typeInfo(@TypeOf(my_struct)).Struct.fields, 0..) |field, i| {
+            inline for (@typeInfo(@TypeOf(my_struct)).@"struct".fields, 0..) |field, i| {
                 tuple[i] = @field(my_struct, field.name);
             }
             return tuple;
@@ -233,28 +233,9 @@ pub fn Bench() type {
 
         // -----------------------------------------------------------------------
         // -----------------------------------------------------------------------
-
         pub fn setName(self: *Self, allocator: Allocator, SRC: anytype) !void {
-            var i_dot: usize = undefined;
-            var i_slash: usize = undefined;
-            var i_src: usize = SRC.file.len - 1;
-
-            while (i_src > 0) : (i_src -= 1) {
-                if (SRC.file[i_src] == '.') {
-                    i_dot = i_src;
-                    break;
-                }
-            }
-            while (i_src > 0) : (i_src -= 1) {
-                if ((SRC.file[i_src] == '/') or (SRC.file[i_src] == '\\')) {
-                    i_slash = i_src;
-                    break;
-                }
-            }
-
-            self.fft_name = try allocator.alloc(u8, 256);
-            std.mem.copy(u8, self.fft_name, SRC.file[i_slash + 1 .. i_dot]);
-            self.fft_name.len = i_dot - i_slash - 1;
+            const basename = std.fs.path.basename(SRC.file);
+            self.fft_name = try allocator.dupe(u8, basename);
         }
 
         pub fn writeResult(self: *Self, allocator: Allocator) !void {

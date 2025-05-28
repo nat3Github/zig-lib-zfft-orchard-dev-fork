@@ -25,11 +25,11 @@ pub fn fft(comptime C: type, N: usize, w: [*]C, w_sr: [*]C, out: [*]C, in: [*]C)
 }
 
 pub fn sr_dit_dr_S_P(comptime C: type, w: [*]C, w_sr: [*]C, log2_N: usize, in: [*]C, out: [*]C, l: usize, i: usize) void {
-    var is: usize = math.shl(usize, 1, log2_N -% l);
+    const is: usize = math.shl(usize, 1, log2_N -% l);
 
-    var os: usize = math.shl(usize, 1, l -% 2);
+    const os: usize = math.shl(usize, 1, l -% 2);
 
-    var t: usize = log2_N - l;
+    const t: usize = log2_N - l;
 
     switch (l) {
 
@@ -57,8 +57,8 @@ pub fn sr_dit_dr_S_P(comptime C: type, w: [*]C, w_sr: [*]C, log2_N: usize, in: [
 
             var k: usize = 1;
             while (k < os / 2) : (k += 1) {
-                var w1: C = get_twiddle(C, math.shl(usize, k, t), log2_N, w);
-                var w3: C = get_twiddle_sr(C, math.shl(usize, k, t), log2_N, w_sr);
+                const w1: C = get_twiddle(C, math.shl(usize, k, t), log2_N, w);
+                const w3: C = get_twiddle_sr(C, math.shl(usize, k, t), log2_N, w_sr);
 
                 sr_dit_bf4(C, os, out + k, w1, w3);
                 sr_dit_bf4(C, os, out + os - k, conjI(w1), neg(conjI(w3)));

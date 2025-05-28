@@ -21,11 +21,11 @@ pub fn main() !void {
             const C: type = Complex(T);
 
             // input x, output y arrays
-            var nfft: usize = std.math.pow(usize, 2, m);
-            var x = try allocator.alloc(C, nfft);
-            var y = try allocator.alloc(C, nfft);
-            var x_ref = try allocator.alloc(C, nfft);
-            var y_ref = try allocator.alloc(C, nfft);
+            const nfft: usize = std.math.pow(usize, 2, m);
+            const x = try allocator.alloc(C, nfft);
+            const y = try allocator.alloc(C, nfft);
+            const x_ref = try allocator.alloc(C, nfft);
+            const y_ref = try allocator.alloc(C, nfft);
             Bench.gen_data(x_ref, x);
 
             // fft under test ------------------------------------------------------------
@@ -39,17 +39,17 @@ pub fn main() !void {
             var sr_sched_off: [*]usize = undefined;
             var sr_sched_cnt: [*]usize = undefined;
 
-            var w = try allocator.alloc(C, nfft / 4);
+            const w = try allocator.alloc(C, nfft / 4);
             twiddle_init(C, nfft / 4, nfft, w.ptr);
 
-            var cp_input_lut_slice = try allocator.alloc(usize, nfft / 2);
+            const cp_input_lut_slice = try allocator.alloc(usize, nfft / 2);
             cp_input_lut = cp_input_lut_slice.ptr;
             cp_input_lut_init(usize, nfft, cp_input_lut);
 
-            var sr_sched_cnt_slice = try allocator.alloc(usize, m);
+            const sr_sched_cnt_slice = try allocator.alloc(usize, m);
             sr_sched_cnt = sr_sched_cnt_slice.ptr;
 
-            var sr_sched_off_slice = try allocator.alloc(usize, jacobsthal(math.log2(nfft)) + 1);
+            const sr_sched_off_slice = try allocator.alloc(usize, jacobsthal(math.log2(nfft)) + 1);
             sr_sched_off = sr_sched_off_slice.ptr;
 
             sr_sched_lut_init(usize, nfft, sr_sched_cnt, sr_sched_off);

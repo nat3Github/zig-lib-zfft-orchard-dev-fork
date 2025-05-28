@@ -3,7 +3,6 @@ const math = std.math;
 const print = std.debug.print;
 const Complex = std.math.Complex;
 
-const isSignedInt = std.meta.trait.isSignedInt;
 const Allocator = std.mem.Allocator;
 
 const ValueType = @import("type_helpers").ValueType;
@@ -27,17 +26,17 @@ pub const CP = struct {
 
             // eval binary carry sequency
             hn = h + 2;
-            var c: T = @bitSizeOf(T) - 2 - @clz(h ^ hn);
+            const c: T = @bitSizeOf(T) - 2 - @clz(h ^ hn);
 
             // input indices
-            var i_0: T = math.shr(T, (p -% q), r);
+            const i_0: T = math.shr(T, (p -% q), r);
 
             input_lut[h / 2] = i_0;
 
             // advance to next input index
-            var m2: T = math.shr(T, val_to_shift, c);
-            var m1: T = m2 - 1;
-            var m: T = p & m2;
+            const m2: T = math.shr(T, val_to_shift, c);
+            const m1: T = m2 - 1;
+            const m: T = p & m2;
 
             q = (q & m1) | m;
             p = (p & m1) | ((m ^ m2) << 1);
@@ -54,8 +53,8 @@ pub const SR = struct {
     }
 
     pub fn lut_dr(comptime T: type, log2_N: T, out: T, l: T, i: T, input_lut: [*]T) void {
-        var is: T = math.shl(T, 1, log2_N - l);
-        var os: T = math.shl(T, 1, l -% 2);
+        const is: T = math.shl(T, 1, log2_N - l);
+        const os: T = math.shl(T, 1, l -% 2);
 
         switch (l) {
             1 => {
@@ -75,8 +74,9 @@ pub const SR = struct {
     }
 
     pub fn jacobsthal(n: anytype) @TypeOf(n) {
-        comptime var T = @TypeOf(n);
-        if (comptime isSignedInt(T)) {
+        const T = @TypeOf(n);
+
+        if (comptime @typeInfo(T).int.signedness == .signed) {
             @compileError("accepts only unsigned integer types");
         }
 

@@ -20,11 +20,11 @@ pub fn fft(comptime C: type, N: usize, w: [*]C, w_sr: [*]C, out: [*]C, in: [*]C)
 }
 
 pub fn sr_dit_dr(comptime C: type, w: [*]C, w_sr: [*]C, log2_N: usize, in: [*]C, out: [*]C, l: usize, i: usize) void {
-    var is: usize = math.shl(usize, 1, log2_N -% l);
+    const is: usize = math.shl(usize, 1, log2_N -% l);
 
-    var os: usize = math.shl(usize, 1, l -% 2);
+    const os: usize = math.shl(usize, 1, l -% 2);
 
-    var t: usize = log2_N - l;
+    const t: usize = log2_N - l;
 
     switch (l) {
 

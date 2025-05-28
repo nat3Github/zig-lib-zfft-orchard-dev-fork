@@ -167,7 +167,7 @@ pub inline fn mulConjI(a: anytype, b: @TypeOf(a)) @TypeOf(a) {
 }
 
 pub inline fn div(a: anytype, b: @TypeOf(a)) @TypeOf(a) {
-    var den: @TypeOf(a.re) = b.re * b.re + b.im * b.im;
+    const den: @TypeOf(a.re) = b.re * b.re + b.im * b.im;
 
     return @TypeOf(a).init((a.re * b.re + a.im * b.im) / den, (a.im * b.re - a.re * b.im) / den);
 }

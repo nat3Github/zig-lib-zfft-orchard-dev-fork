@@ -24,8 +24,8 @@ pub fn test_cp_input_lut() !void {
         defer arena.deinit();
 
         const allocator = arena.allocator();
-        var N: T = 32;
-        var cp_input_lut = try allocator.alloc(T, N / 2);
+        const N: T = 32;
+        const cp_input_lut = try allocator.alloc(T, N / 2);
 
         LUT.CP.input_lut_init(T, N, cp_input_lut.ptr);
 
@@ -60,8 +60,8 @@ pub fn test_sr_input_lut() !void {
         defer arena.deinit();
 
         const allocator = arena.allocator();
-        var N: T = 32;
-        var sr_input_lut = try allocator.alloc(T, N / 2);
+        const N: T = 32;
+        const sr_input_lut = try allocator.alloc(T, N / 2);
 
         LUT.SR.input_lut_init(T, N, sr_input_lut.ptr);
 
@@ -119,9 +119,9 @@ pub fn test_sr_sched_init() !void {
     const allocator = arena.allocator();
 
     inline for (.{ u16, u32, u64, usize }) |T| {
-        var N: T = 32;
-        var sr_sched_cnt = try allocator.alloc(T, 5);
-        var sr_sched_off = try allocator.alloc(T, LUT.SR.jacobsthal(math.log2(N)) + 1);
+        const N: T = 32;
+        const sr_sched_cnt = try allocator.alloc(T, 5);
+        const sr_sched_off = try allocator.alloc(T, LUT.SR.jacobsthal(math.log2(N)) + 1);
 
         LUT.SR.sched_lut_init(T, N, sr_sched_cnt.ptr, sr_sched_off.ptr);
 

@@ -61,9 +61,9 @@ const fft_desc = [_]FFTdescriptor{
 const FFTdescriptor = struct {
     name: []const u8,
 
-    pub fn configure(self: @This(), bb: *std.build.Builder, allo: std.mem.Allocator, list_test_verify_cmd: anytype, list_test_verify_exe: anytype, list_test_speed_cmd: anytype, list_test_speed_exe: anytype) !void {
-        var src_file = try std.fmt.allocPrint(allo, "{s}{s}{s}", .{ "./test/ffts/", self.name, ".zig" });
-        var test_name = try std.fmt.allocPrint(allo, "{s}", .{self.name});
+    pub fn configure(self: @This(), bb: *std.Build, allo: std.mem.Allocator, list_test_verify_cmd: anytype, list_test_verify_exe: anytype, list_test_speed_cmd: anytype, list_test_speed_exe: anytype, target: std.Build.ResolvedTarget) !void {
+        const src_file = try std.fmt.allocPrint(allo, "{s}{s}{s}", .{ "./test/ffts/", self.name, ".zig" });
+        const test_name = try std.fmt.allocPrint(allo, "{s}", .{self.name});
 
         // We build TWO different versions of each fft, one is used for
         // verification of correctness, the other is used for timing of speed.
@@ -77,10 +77,11 @@ const FFTdescriptor = struct {
 
         const test_verify_exe = bb.addExecutable(.{
             .name = test_name,
-            .root_source_file = .{ .path = src_file },
+            .root_source_file = bb.path(src_file),
             .optimize = optimize_verify,
+            .target = target,
         });
-        test_verify_exe.addOptions("build_options", build_options_verify);
+        test_verify_exe.root_module.addOptions("build_options", build_options_verify);
         try list_test_verify_exe.append(test_verify_exe);
 
         const test_verify_cmd = bb.addRunArtifact(test_verify_exe);
@@ -93,10 +94,11 @@ const FFTdescriptor = struct {
 
         const test_speed_exe = bb.addExecutable(.{
             .name = test_name,
-            .root_source_file = .{ .path = src_file },
+            .root_source_file = bb.path(src_file),
             .optimize = optimize_speed,
+            .target = target,
         });
-        test_speed_exe.addOptions("build_options", build_options_speed);
+        test_speed_exe.root_module.addOptions("build_options", build_options_speed);
         try list_test_speed_exe.append(test_speed_exe);
 
         const test_speed_cmd = bb.addRunArtifact(test_speed_exe);
@@ -104,7 +106,7 @@ const FFTdescriptor = struct {
     }
 };
 
-pub fn build(b: *std.build.Builder) !void {
+pub fn build(b: *std.Build) !void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
     const allocator = arena.allocator();
@@ -113,41 +115,62 @@ pub fn build(b: *std.build.Builder) !void {
     const optimize = b.standardOptimizeOption(.{});
 
     // Modules and their dependencies -------------------------- creates *Build.Module
-
-    const type_helpers_mod = b.createModule(.{ .source_file = .{ .path = "src/type_helpers.zig" } });
-
-    const bit_reverse_mod = b.createModule(.{ .source_file = .{ .path = "src/bit_reverse.zig" } });
-
-    const complex_math_mod = b.createModule(.{
-        .source_file = .{ .path = "src/complex_math.zig" },
-        .dependencies = &.{.{ .name = "type_helpers", .module = type_helpers_mod }},
+    const type_helpers_mod = b.createModule(.{
+        .root_source_file = b.path("src/type_helpers.zig"),
     });
 
-    const butterflies_mod = b.createModule(.{ .source_file = .{ .path = "src/butterflies.zig" }, .dependencies = &.{
-        .{ .name = "type_helpers", .module = type_helpers_mod },
-        .{ .name = "complex_math", .module = complex_math_mod },
-    } });
+    const bit_reverse_mod = b.createModule(.{
+        .root_source_file = b.path("src/bit_reverse.zig"),
+    });
 
-    const twiddles_mod = b.createModule(.{ .source_file = .{ .path = "src/Twiddles.zig" }, .dependencies = &.{.{ .name = "type_helpers", .module = type_helpers_mod }} });
+    const complex_math_mod = b.createModule(.{
+        .root_source_file = b.path("src/complex_math.zig"),
+        .imports = &.{
+            .{ .name = "type_helpers", .module = type_helpers_mod },
+        },
+    });
 
-    const lut_mod = b.createModule(.{ .source_file = .{ .path = "src/LUT.zig" } });
+    const butterflies_mod = b.createModule(.{
+        .root_source_file = b.path("src/butterflies.zig"),
+        .imports = &.{
+            .{ .name = "type_helpers", .module = type_helpers_mod },
+            .{ .name = "complex_math", .module = complex_math_mod },
+        },
+    });
 
-    const fft_mod = b.createModule(.{ .source_file = .{ .path = "src/FFT.zig" }, .dependencies = &.{
-        .{ .name = "type_helpers", .module = type_helpers_mod },
-        .{ .name = "bit_reverse", .module = bit_reverse_mod },
-        .{ .name = "complex_math", .module = complex_math_mod },
-        .{ .name = "butterflies", .module = butterflies_mod },
-        .{ .name = "LUT", .module = lut_mod },
-        .{ .name = "Twiddles", .module = twiddles_mod },
-    } });
+    const twiddles_mod = b.createModule(.{
+        .root_source_file = b.path("src/Twiddles.zig"),
+        .imports = &.{.{ .name = "type_helpers", .module = type_helpers_mod }},
+    });
 
-    const config_mod = b.createModule(.{ .source_file = .{ .path = "Config.zig" } });
+    const lut_mod = b.createModule(.{
+        .root_source_file = b.path("src/LUT.zig"),
+    });
 
-    const bench_mod = b.createModule(.{ .source_file = .{ .path = "src/Bench.zig" }, .dependencies = &.{
-        .{ .name = "type_helpers", .module = type_helpers_mod },
-        .{ .name = "FFT", .module = fft_mod },
-        .{ .name = "Config", .module = config_mod },
-    } });
+    const fft_mod = b.createModule(.{
+        .root_source_file = b.path("src/FFT.zig"),
+        .imports = &.{
+            .{ .name = "type_helpers", .module = type_helpers_mod },
+            .{ .name = "bit_reverse", .module = bit_reverse_mod },
+            .{ .name = "complex_math", .module = complex_math_mod },
+            .{ .name = "butterflies", .module = butterflies_mod },
+            .{ .name = "LUT", .module = lut_mod },
+            .{ .name = "Twiddles", .module = twiddles_mod },
+        },
+    });
+
+    const config_mod = b.createModule(.{
+        .root_source_file = b.path("Config.zig"),
+    });
+
+    const bench_mod = b.createModule(.{
+        .root_source_file = b.path("src/Bench.zig"),
+        .imports = &.{
+            .{ .name = "type_helpers", .module = type_helpers_mod },
+            .{ .name = "FFT", .module = fft_mod },
+            .{ .name = "Config", .module = config_mod },
+        },
+    });
 
     // TEST Executables ----------------------------- creates *Build.Step.Compile
     // even though these will be run as tests, we still invoke the "b.addExecutable"
@@ -155,64 +178,64 @@ pub fn build(b: *std.build.Builder) !void {
 
     const type_helpers_exe = b.addExecutable(.{
         .name = "type_helpers",
-        .root_source_file = .{ .path = "test/type_helpers.zig" },
+        .root_source_file = b.path("test/type_helpers.zig"),
         .target = target,
         .optimize = optimize,
     });
 
     const bit_reverse_exe = b.addExecutable(.{
         .name = "bit_reverse",
-        .root_source_file = .{ .path = "test/bit_reverse.zig" },
+        .root_source_file = b.path("test/bit_reverse.zig"),
         .target = target,
         .optimize = optimize,
     });
 
     const complex_math_exe = b.addExecutable(.{
         .name = "complex_math",
-        .root_source_file = .{ .path = "test/complex_math.zig" },
+        .root_source_file = b.path("test/complex_math.zig"),
         .target = target,
         .optimize = optimize,
     });
 
     const butterflies_exe = b.addExecutable(.{
         .name = "butterflies",
-        .root_source_file = .{ .path = "test/butterflies.zig" },
+        .root_source_file = b.path("test/butterflies.zig"),
         .target = target,
         .optimize = optimize,
     });
 
     const twiddles_exe = b.addExecutable(.{
         .name = "twiddles",
-        .root_source_file = .{ .path = "test/twiddles.zig" },
+        .root_source_file = b.path("test/twiddles.zig"),
         .target = target,
         .optimize = optimize,
     });
 
     const lut_exe = b.addExecutable(.{
         .name = "lut",
-        .root_source_file = .{ .path = "test/lut.zig" },
+        .root_source_file = b.path("test/lut.zig"),
         .target = target,
         .optimize = optimize,
     });
 
     // Run Artifacts, their modules and installation --------this creates *Build.Step.Run
 
-    type_helpers_exe.addModule("type_helpers", type_helpers_mod);
+    type_helpers_exe.root_module.addImport("type_helpers", type_helpers_mod);
     const type_helpers_cmd = b.addRunArtifact(type_helpers_exe);
 
-    bit_reverse_exe.addModule("bit_reverse", bit_reverse_mod);
+    bit_reverse_exe.root_module.addImport("bit_reverse", bit_reverse_mod);
     const bit_reverse_cmd = b.addRunArtifact(bit_reverse_exe);
 
-    complex_math_exe.addModule("complex_math", complex_math_mod);
+    complex_math_exe.root_module.addImport("complex_math", complex_math_mod);
     const complex_math_cmd = b.addRunArtifact(complex_math_exe);
 
-    butterflies_exe.addModule("butterflies", butterflies_mod);
+    butterflies_exe.root_module.addImport("butterflies", butterflies_mod);
     const butterflies_cmd = b.addRunArtifact(butterflies_exe);
 
-    twiddles_exe.addModule("Twiddles", twiddles_mod);
+    twiddles_exe.root_module.addImport("Twiddles", twiddles_mod);
     const twiddles_cmd = b.addRunArtifact(twiddles_exe);
 
-    lut_exe.addModule("LUT", lut_mod);
+    lut_exe.root_module.addImport("LUT", lut_mod);
     const lut_cmd = b.addRunArtifact(lut_exe);
 
     // FFT --------------------------------------------------
@@ -231,31 +254,32 @@ pub fn build(b: *std.build.Builder) !void {
             &list_test_verify_exe,
             &list_test_speed_cmd,
             &list_test_speed_exe,
+            target,
         );
     }
 
     for (list_test_verify_exe.items) |item| {
-        item.addModule("type_helpers", type_helpers_mod);
-        item.addModule("Bench", bench_mod);
-        item.addModule("bit_reverse", bit_reverse_mod);
-        item.addModule("complex_math", complex_math_mod);
-        item.addModule("butterflies", butterflies_mod);
-        item.addModule("Twiddles", twiddles_mod);
-        item.addModule("LUT", lut_mod);
-        item.addModule("FFT", fft_mod);
+        item.root_module.addImport("type_helpers", type_helpers_mod);
+        item.root_module.addImport("Bench", bench_mod);
+        item.root_module.addImport("bit_reverse", bit_reverse_mod);
+        item.root_module.addImport("complex_math", complex_math_mod);
+        item.root_module.addImport("butterflies", butterflies_mod);
+        item.root_module.addImport("Twiddles", twiddles_mod);
+        item.root_module.addImport("LUT", lut_mod);
+        item.root_module.addImport("FFT", fft_mod);
     }
 
     // Note: the verification code is NOT installed in the zig-out directory
 
     for (list_test_speed_exe.items) |item| {
-        item.addModule("type_helpers", type_helpers_mod);
-        item.addModule("Bench", bench_mod);
-        item.addModule("bit_reverse", bit_reverse_mod);
-        item.addModule("complex_math", complex_math_mod);
-        item.addModule("butterflies", butterflies_mod);
-        item.addModule("Twiddles", twiddles_mod);
-        item.addModule("LUT", lut_mod);
-        item.addModule("FFT", fft_mod);
+        item.root_module.addImport("type_helpers", type_helpers_mod);
+        item.root_module.addImport("Bench", bench_mod);
+        item.root_module.addImport("bit_reverse", bit_reverse_mod);
+        item.root_module.addImport("complex_math", complex_math_mod);
+        item.root_module.addImport("butterflies", butterflies_mod);
+        item.root_module.addImport("Twiddles", twiddles_mod);
+        item.root_module.addImport("LUT", lut_mod);
+        item.root_module.addImport("FFT", fft_mod);
     }
 
     // b.installArtifact(...) declares intent for executable to be installed

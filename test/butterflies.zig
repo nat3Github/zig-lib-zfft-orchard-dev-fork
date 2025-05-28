@@ -69,8 +69,8 @@ pub fn test_cp_dit_bf() !void {
         out[2] = C.init(2.1, -2.2);
         out[3] = C.init(5.2, -0.3);
 
-        var w = C.init(4.2, -1.7);
-        var s: usize = 1;
+        const w = C.init(4.2, -1.7);
+        const s: usize = 1;
 
         cp_dit_bf(C, s, out.ptr, w);
 
@@ -108,7 +108,7 @@ pub fn test_cp_dit_bf_pi4() !void {
         out[2] = C.init(2.1, -2.2);
         out[3] = C.init(5.2, -0.3);
 
-        var s: usize = 1;
+        const s: usize = 1;
 
         cp_dit_bf_pi4(C, s, out.ptr);
 
@@ -146,7 +146,7 @@ pub fn test_cp_dit_bf_0() !void {
         out[2] = C.init(2.1, -2.2);
         out[3] = C.init(5.2, -0.3);
 
-        var s: usize = 1;
+        const s: usize = 1;
 
         cp_dit_bf_0(C, s, out.ptr);
 
@@ -178,10 +178,10 @@ pub fn test_ct_dit_bf2_0() !void {
         const C: type = Complex(T);
 
         var in = try allocator.alloc(C, 4);
-        var out = try allocator.alloc(C, 4);
+        const out = try allocator.alloc(C, 4);
 
-        var si: usize = 1;
-        var so: usize = 3;
+        const si: usize = 1;
+        const so: usize = 3;
 
         in[0] = C.init(1.1, 2.2);
         in[1] = C.init(0.3, 1.2);
@@ -212,7 +212,7 @@ pub fn test_ct_dit_bf2_pi4() !void {
 
         var out = try allocator.alloc(C, 4);
 
-        var s: usize = 1;
+        const s: usize = 1;
 
         out[0] = C.init(1.1, 2.2);
         out[1] = C.init(0.3, 1.2);
@@ -244,7 +244,7 @@ pub fn test_ct_dit_bf2_3pi4() !void {
 
         var out = try allocator.alloc(C, 4);
 
-        var s: usize = 1;
+        const s: usize = 1;
 
         out[0] = C.init(1.1, 2.2);
         out[1] = C.init(0.3, 1.2);
@@ -276,7 +276,7 @@ pub fn test_ct_dit_bf2_pi2() !void {
 
         var out = try allocator.alloc(C, 4);
 
-        var s: usize = 1;
+        const s: usize = 1;
 
         out[0] = C.init(1.1, 2.2);
         out[1] = C.init(0.3, 1.2);
@@ -312,7 +312,7 @@ pub fn test_ct_dit_bf2() !void {
 
         var out = try allocator.alloc(C, 4);
 
-        var s: usize = 1;
+        const s: usize = 1;
 
         out[0] = C.init(1.1, 2.2);
         out[1] = C.init(0.3, 1.2);
@@ -343,10 +343,10 @@ pub fn test_ct_dif_bf2_0() !void {
         const C: type = Complex(T);
 
         var in = try allocator.alloc(C, 4);
-        var out = try allocator.alloc(C, 4);
+        const out = try allocator.alloc(C, 4);
 
-        var si: usize = 1;
-        var so: usize = 3;
+        const si: usize = 1;
+        const so: usize = 3;
 
         in[0] = C.init(1.1, 2.2);
         in[1] = C.init(0.3, 1.2);
@@ -382,7 +382,7 @@ pub fn test_ct_dif_bf2() !void {
 
         var out = try allocator.alloc(C, 4);
 
-        var s: usize = 1;
+        const s: usize = 1;
 
         out[0] = C.init(1.1, 2.2);
         out[1] = C.init(0.3, 1.2);
@@ -430,8 +430,8 @@ pub fn test_mr_dit_bf4_0() !void {
         out[4] = C.init(0.0, 0.0);
         out[5] = C.init(0.0, 0.0);
 
-        var si: usize = 1;
-        var so: usize = 2;
+        const si: usize = 1;
+        const so: usize = 2;
 
         mr_dit_bf4_0(C, so, si, out.ptr, in.ptr);
 
@@ -470,7 +470,7 @@ pub fn test_mr_dit_bf4_1() !void {
         out[2] = C.init(2.1, -2.2);
         out[3] = C.init(5.2, 0.3);
 
-        var s: usize = 1;
+        const s: usize = 1;
 
         mr_dit_bf4_1(C, s, out.ptr);
 
@@ -513,7 +513,7 @@ pub fn test_mr_dit_bf4() !void {
         out[2] = C.init(2.1, -2.2);
         out[3] = C.init(5.2, 0.3);
 
-        var s: usize = 1;
+        const s: usize = 1;
 
         mr_dit_bf4(C, s, out.ptr, w1, w2, w3);
 
@@ -552,9 +552,9 @@ pub fn test_sr_dit_bf4() !void {
         out[2] = C.init(2.1, -2.2);
         out[3] = C.init(5.2, 0.3);
 
-        var w1 = C.init(4.2, -1.7);
-        var w3 = C.init(-2.1, -1.3);
-        var s: usize = 1;
+        const w1 = C.init(4.2, -1.7);
+        const w3 = C.init(-2.1, -1.3);
+        const s: usize = 1;
 
         sr_dit_bf4(C, s, out.ptr, w1, w3);
 
@@ -593,7 +593,7 @@ pub fn test_sr_dit_bf4_pi4() !void {
         out[2] = C.init(2.1, -2.2);
         out[3] = C.init(5.2, -0.3);
 
-        var s: usize = 1;
+        const s: usize = 1;
 
         sr_dit_bf4_pi4(C, s, out.ptr);
 
@@ -632,7 +632,7 @@ pub fn test_sr_dit_bf4_0() !void {
         out[2] = C.init(2.1, -2.2);
         out[3] = C.init(5.2, -0.3);
 
-        var s: usize = 1;
+        const s: usize = 1;
 
         sr_dit_bf4_0(C, s, out.ptr);
 

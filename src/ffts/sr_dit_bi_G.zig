@@ -47,14 +47,14 @@ pub fn sr_dit_bi_G(comptime C: type, w: [*]C, w3: [*]C, out: [*]C, in: [*]C, N: 
 
     var k: usize = 2;
     while (k <= log2_N) : (k += 1) {
-        var n2: usize = math.shl(usize, 1, k);
-        var n4: usize = math.shr(usize, n2, 2);
+        const n2: usize = math.shl(usize, 1, k);
+        const n4: usize = math.shr(usize, n2, 2);
 
         j = 0;
         while (j < n4) : (j += 1) {
-            var t: usize = math.shl(usize, j, log2_N - k);
-            var tw1: C = get_twiddle(C, t, log2_N, w);
-            var tw3: C = get_twiddle(C, t, log2_N, w3);
+            const t: usize = math.shl(usize, j, log2_N - k);
+            const tw1: C = get_twiddle(C, t, log2_N, w);
+            const tw3: C = get_twiddle(C, t, log2_N, w3);
 
             is = j;
             id = math.shl(usize, 2, k);

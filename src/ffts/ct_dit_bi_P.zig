@@ -36,7 +36,7 @@ pub fn ct_fft_bi(comptime C: type, w: [*]C, in: [*]C, out: [*]C, log2_N: usize) 
     // stage 1
     i = 0;
     while (i < N / 4) : (i += 1) {
-        var t: [*]C = out + math.shl(usize, i, 2);
+        const t: [*]C = out + math.shl(usize, i, 2);
         ct_dit_bf2_0(C, 2, 2, t, t);
         ct_dit_bf2_pi2(C, 2, t + 1);
     }
@@ -44,12 +44,12 @@ pub fn ct_fft_bi(comptime C: type, w: [*]C, in: [*]C, out: [*]C, log2_N: usize) 
     // stages 2 to log2_N -1
     j = 2;
     while (j < log2_N) : (j += 1) {
-        var s: usize = log2_N - j - 1;
-        var l: usize = math.shl(usize, 1, j);
+        const s: usize = log2_N - j - 1;
+        const l: usize = math.shl(usize, 1, j);
 
         i = 0;
         while (i < math.shl(usize, 1, s)) : (i += 1) {
-            var t: [*]C = out + math.shl(usize, i, j + 1);
+            const t: [*]C = out + math.shl(usize, i, j + 1);
             ct_dit_bf2_0(C, l, l, t, t);
             ct_dit_bf2_pi2(C, l, t + l / 2);
             ct_dit_bf2_pi4(C, l, t + l / 4);

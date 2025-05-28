@@ -34,7 +34,7 @@ pub fn mr_dit_bi(comptime C: type, w: [*]C, N: usize, in: [*]C, out: [*]C) void 
         // This is BIT_REVERSE42_LOOP
         var i: usize = 0;
         while (i < N) : (i += 4) {
-            var r = bit_reverse_swap_bits(i, log2_N);
+            const r = bit_reverse_swap_bits(i, log2_N);
 
             ct_dit_bf2_0(C, 1, N / 2, out + i, in + r);
             ct_dit_bf2_0(C, 1, N / 2, out + i + 2, in + r + N / 8);
@@ -43,7 +43,7 @@ pub fn mr_dit_bi(comptime C: type, w: [*]C, N: usize, in: [*]C, out: [*]C) void 
         // This is BIT_REVERSE42_LOOP
         var i: usize = 0;
         while (i < N) : (i += 4) {
-            var r = bit_reverse_swap_bits(i, log2_N);
+            const r = bit_reverse_swap_bits(i, log2_N);
 
             mr_dit_bf4_0(C, 1, N / 4, out + i, in + r);
         }
@@ -52,12 +52,12 @@ pub fn mr_dit_bi(comptime C: type, w: [*]C, N: usize, in: [*]C, out: [*]C) void 
     // higher stages
     var j: usize = 2 - (log2_N & 1);
     while (j < log2_N) : (j += 2) {
-        var s: usize = log2_N - (j + 2);
-        var l: usize = math.shl(usize, 1, j);
+        const s: usize = log2_N - (j + 2);
+        const l: usize = math.shl(usize, 1, j);
 
         var i: usize = 0;
         while (i < math.shl(usize, 1, s)) : (i += 1) {
-            var t: [*]C = out + math.shl(usize, i, j + 2);
+            const t: [*]C = out + math.shl(usize, i, j + 2);
 
             var k: usize = 0;
             while (k < l) : (k += 1) {

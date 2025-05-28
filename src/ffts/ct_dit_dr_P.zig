@@ -22,7 +22,7 @@ pub fn fft(comptime C: type, N: usize, w: [*]C, out: [*]C, in: [*]C) void {
 
 pub fn ct_fft_dr(comptime C: type, w: [*]C, in: [*]C, out: [*]C, s: usize, log2_N: usize) void {
     const l: usize = math.shl(usize, 1, log2_N - s - 1);
-    var stride: usize = math.shl(usize, 1, s);
+    const stride: usize = math.shl(usize, 1, s);
 
     switch (l) {
         1 => {

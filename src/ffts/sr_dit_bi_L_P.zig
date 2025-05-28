@@ -24,7 +24,7 @@ pub fn sr_dit_bi_L_P(comptime C: type, w1: [*]C, w3: [*]C, out: [*]C, in: [*]C, 
     var j: usize = 0;
     var i: usize = 0;
     while (i < N) : (i += 2) {
-        var i_0: usize = sr_input_lut[i / 2];
+        const i_0: usize = sr_input_lut[i / 2];
 
         if (sr_sched_off[j] * 2 > i) {
             out[i] = in[i_0];
@@ -37,20 +37,20 @@ pub fn sr_dit_bi_L_P(comptime C: type, w1: [*]C, w3: [*]C, out: [*]C, in: [*]C, 
 
     // stage 1
     if (log2_N > 1) {
-        var c: usize = sr_sched_cnt[1];
+        const c: usize = sr_sched_cnt[1];
         i = 0;
         while (i < c) : (i += 1) {
-            var o: usize = math.shl(usize, sr_sched_off[i], 2);
+            const o: usize = math.shl(usize, sr_sched_off[i], 2);
             sr_dit_bf4_0(C, 1, out + o);
         }
     }
 
     // stage 2
     if (log2_N > 2) {
-        var c: usize = sr_sched_cnt[2];
+        const c: usize = sr_sched_cnt[2];
         i = 0;
         while (i < c) : (i += 1) {
-            var o: usize = math.shl(usize, sr_sched_off[i], 3);
+            const o: usize = math.shl(usize, sr_sched_off[i], 3);
             sr_dit_bf4_0(C, 2, out + o);
             sr_dit_bf4_pi4(C, 2, out + o + 1);
         }
@@ -60,12 +60,12 @@ pub fn sr_dit_bi_L_P(comptime C: type, w1: [*]C, w3: [*]C, out: [*]C, in: [*]C, 
     if (log2_N > 3) {
         var s: usize = 3;
         while (s < log2_N) : (s += 1) {
-            var c: usize = sr_sched_cnt[s];
+            const c: usize = sr_sched_cnt[s];
             i = 0;
             while (i < c) : (i += 1) {
-                var o: [*]C = out + math.shl(usize, sr_sched_off[i], s + 1);
-                var t: usize = log2_N - s - 1;
-                var os: usize = math.shl(usize, 1, s - 1);
+                const o: [*]C = out + math.shl(usize, sr_sched_off[i], s + 1);
+                const t: usize = log2_N - s - 1;
+                const os: usize = math.shl(usize, 1, s - 1);
 
                 sr_dit_bf4_0(C, os, o);
                 sr_dit_bf4_pi4(C, os, o + os / 2);

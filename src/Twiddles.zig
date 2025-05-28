@@ -41,7 +41,7 @@ pub const Short = struct {
         // var theta: V = undefined;
         var i: usize = 0;
         while (i < l) : (i += 1) {
-            var theta: V = -2.0 * math.pi * @as(V, @floatFromInt(i)) / @as(V, @floatFromInt(N));
+            const theta: V = -2.0 * math.pi * @as(V, @floatFromInt(i)) / @as(V, @floatFromInt(N));
             twiddles[i].re = @cos(theta);
             twiddles[i].im = @sin(theta);
         }
@@ -104,7 +104,7 @@ pub const Short = struct {
 
         // obtain pointer into proper location of short table z and
         // perform swapping and negation as needed.
-        var twiddles_p: [*]U = @as([*]U, @ptrCast(&twiddles[q]));
+        const twiddles_p: [*]U = @as([*]U, @ptrCast(&twiddles[q]));
         vi.u = twiddles_p[swp ^ 1] ^ (math.shl(U, swp, @bitSizeOf(U) - 1));
         vr.u = twiddles_p[swp] ^ (math.shl(U, (i & 1), @bitSizeOf(U) - 1));
 
@@ -141,7 +141,7 @@ pub const Std = struct {
         // var theta: V = undefined;
         var i: usize = 0;
         while (i < l) : (i += 1) {
-            var theta: V = -2.0 * std.math.pi * @as(V, @floatFromInt(i)) / @as(V, @floatFromInt(N));
+            const theta: V = -2.0 * std.math.pi * @as(V, @floatFromInt(i)) / @as(V, @floatFromInt(N));
             twiddles[i].re = @cos(theta);
             twiddles[i].im = @sin(theta);
         }

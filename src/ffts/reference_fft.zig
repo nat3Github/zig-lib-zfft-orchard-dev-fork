@@ -23,16 +23,16 @@ pub fn fft(comptime C: type, size: usize, out: [*]C, in: [*]C, stride: usize) vo
 
         var i: usize = 0;
         while (i < half) : (i += 1) {
-            var a: C = out[i];
-            var b: C = out[i + half];
+            const a: C = out[i];
+            const b: C = out[i + half];
 
-            var angle: V = 2 * math.pi * @as(V, @floatFromInt(i)) / @as(V, @floatFromInt(size));
+            const angle: V = 2 * math.pi * @as(V, @floatFromInt(i)) / @as(V, @floatFromInt(size));
             var tw: C = undefined;
 
             tw.re = @cos(angle);
             tw.im = -@sin(angle);
 
-            var c: C = mul(b, tw);
+            const c: C = mul(b, tw);
             out[i] = add(a, c);
             out[i + half] = sub(a, c);
         }

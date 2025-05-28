@@ -21,11 +21,11 @@ pub fn main() !void {
             const C: type = Complex(T);
 
             // input x, output y arrays
-            var nfft: usize = std.math.pow(usize, 2, m);
-            var x = try allocator.alloc(C, nfft);
-            var y = try allocator.alloc(C, nfft);
-            var x_ref = try allocator.alloc(C, nfft);
-            var y_ref = try allocator.alloc(C, nfft);
+            const nfft: usize = std.math.pow(usize, 2, m);
+            const x = try allocator.alloc(C, nfft);
+            const y = try allocator.alloc(C, nfft);
+            const x_ref = try allocator.alloc(C, nfft);
+            const y_ref = try allocator.alloc(C, nfft);
             Bench.gen_data(x_ref, x);
 
             // fft under test ------------------------------------------------------------
@@ -33,8 +33,8 @@ pub fn main() !void {
             const in_place = true;
             const twiddle_sr_init = @import("Twiddles").Std.sr_init;
 
-            var w = try allocator.alloc(C, nfft / 4);
-            var w3 = try allocator.alloc(C, nfft / 4);
+            const w = try allocator.alloc(C, nfft / 4);
+            const w3 = try allocator.alloc(C, nfft / 4);
             twiddle_sr_init(C, nfft / 4, nfft, w.ptr, w3.ptr);
 
             const args = .{ .C = C, .nfft = nfft, .w = w.ptr, .w3 = w3.ptr, .xp = x.ptr };
