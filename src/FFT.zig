@@ -4,6 +4,14 @@ const print = std.debug.print;
 const Complex = std.math.Complex;
 const ValueType = @import("type_helpers").ValueType;
 
+// reexport modules
+pub const type_helpers = @import("type_helpers");
+pub const bit_reverse = @import("bit_reverse");
+pub const complex_math = @import("complex_math");
+pub const butterflies = @import("butterflies");
+pub const LUT = @import("LUT");
+pub const Twiddles = @import("Twiddles");
+
 pub const Reference = @import("ffts/reference_fft.zig");
 
 pub const Cp_dit_bi_G_L_P = @import("ffts/cp_dit_bi_G_L_P.zig");
